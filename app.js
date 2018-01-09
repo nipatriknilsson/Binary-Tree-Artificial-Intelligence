@@ -20,6 +20,7 @@ var bookRouter = require('./src/routes/bookRoutes')(nav);
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
+app.use('/js', express.static('js'));
 //app.use(bodyParser.urlencoded());
 //app.use(cookieParser());
 //app.use(session({secret: 'library'}));
@@ -34,8 +35,9 @@ app.set('view engine', 'ejs');
 //app.use('/Admin', adminRouter);
 //app.use('/Auth', authRouter);
 
+
 app.get('/', function (req, res) {
-    res.render('index', {
+    res.render('index', /* {
         title: 'Hello from render',
         nav: [{
             Link: '/Books',
@@ -44,13 +46,13 @@ app.get('/', function (req, res) {
             Link: '/Authors',
             Text: 'Authors'
         }]
-    });
+    } */);
 });
 
-app.get('/books', function (req, res) {
-    res.send('Hello Books');
-});
+// app.get('/books', function (req, res) {
+//     res.send('Hello Books');
+// });
 
 app.listen(port, function (err) {
-    console.log('running server on port ' + port);
+    console.log('running server on port http://localhost:' + port);
 });
