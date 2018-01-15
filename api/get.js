@@ -76,38 +76,7 @@ var getNode = function (req, res, next) {
             handle.close();
         }
     });
-
-//    res.send( 'Id finns inte.' );
-    // if ( ! res.headersSent )
-    // {
-    //     res.status(404).send( 'Id finns inte. (1)' );
-    //     res.end();
-    // }
 };
 
-// var apigetController = function (bookService, nav) {
-//     var getNode = function (req, res) {
-//         res.send('Return from get node!');
-//     };
-
-//     var XXXgetIndex = function (req, res) {
-//         var url =
-//             'mongodb://localhost:27017/libraryApp';
-
-//         mongodb.connect(url, function (err, db) {
-//             var collection = db.collection('books');
-
-//             collection.find({}).toArray(
-//                 function (err, results) {
-//                     res.render('bookListView', {
-//                         title: 'Books',
-//                         nav: nav,
-//                         books: results
-//                     });
-//                 }
-//             );
-//         });
-//     };
-// };
 
 module.exports = getNode;
