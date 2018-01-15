@@ -7,18 +7,16 @@ var bodyParser = require('body-parser');
 var app = express();
 
 var port = process.env.PORT || 5000;
-var nav = [{
-    Link: '/Books',
-    Text: 'Book'
-}, {
-    Link: '/Authors',
-    Text: 'Author'
-}];
-var bookRouter = require('./src/routes/bookRoutes')(nav);
-//var adminRouter = require('./src/routes/adminRoutes')(nav);
-//var authRouter = require('./src/routes/authRoutes')(nav);
+// var nav = [{
+//     Link: '/api',
+//     Text: 'Book'
+// }];
 
-app.use(express.static('public'));
+var getNode = require('./src/controllers/get');
+var putNode = require('./src/controllers/put');
+
+
+//app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use('/js', express.static('js'));
 //app.use(bodyParser.urlencoded());
@@ -31,27 +29,16 @@ app.set('views', './src/views');
 
 app.set('view engine', 'ejs');
 
-//app.use('/Books', bookRouter);
+//app.use('/api/get', apigetRouter);
 //app.use('/Admin', adminRouter);
 //app.use('/Auth', authRouter);
 
-
 app.get('/', function (req, res) {
-    res.render('index', /* {
-        title: 'Hello from render',
-        nav: [{
-            Link: '/Books',
-            Text: 'Books'
-        }, {
-            Link: '/Authors',
-            Text: 'Authors'
-        }]
-    } */);
+    res.render('index' );
 });
 
-// app.get('/books', function (req, res) {
-//     res.send('Hello Books');
-// });
+app.get('/api/get', function ( req, res, next ) { getNode ( req, res, next ); } );
+app.get('/api/put', function ( req, res, next ) { putNode ( req, res, next ); } );
 
 app.listen(port, function (err) {
     console.log('running server on port http://localhost:' + port);

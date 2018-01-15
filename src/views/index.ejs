@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
-		<title>Tjugo frågor</title>
+		<title>20q</title>
 		<meta name="generator" content="Bootply" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -11,12 +10,20 @@
     <script src="/js/flowtype.js"></script>
     
     <script>
+      var nodequestion = {};
+      var nodeyes = {};
+      var nodeno = {};
+      var countattempts = 0;
+
       $(document).ready(function() {
         $('.welcomemessage').flowtype({
           minFont   : 12,
           maxFont   : 40,
           fontRatio : 30
         });
+
+        $('.answerarea').hide();
+        $('.newquestionarea').hide();
 
         var size = $('.welcomemessage').css('font-size');
         if ( size < 12 ) {
@@ -29,50 +36,159 @@
 
         $('.welcomemessage').css('font-size', size + 'pt');
 
-        $('.answerarea').html('\
-        <button onclick="sayYes()">Ja</button><button onclick="sayNo()">Nej</button>abcde\
-        ');
-
-        getNextQuestion ();
+        getNextQuestion ('root');
       });
 
-      function getNextQuestion() {
-        $('.questionarea').html('<p align="center" style="font-family: \'lucida console\' \'courier new\' monospace; font-size: 20pt">Väntar på servern...</p>')
+      function getNextQuestion(nodeid) {
+        countattempts ++;
+        $('.congratulatearea').hide();
 
-        var serverResponse = 'Servern svarade med ett fel...';
-        $.get('http://localhost:5000', '', function ( data, textStatus, jqXHR ) {
-          serverResponse = data;
+        $("body").css("cursor", "progress");
+        $('.questionarea').html('<p align="center" style="font-family: \'lucida console\' \'courier new\' monospace; font-size: 20pt">Waiting for the server...</p>');
 
-          $('.questionarea').text('<p align="center" style="font-family: \'lucida console\' \'courier new\' monospace; font-size: 20pt">' + serverResponse + '</p>')
-        } );
+        nodequestion = {};
+        nodeyes = {};
+        nodeno = {};
 
-
+        var requestrecive = $.ajax({
+          url: "/api/get",
+          method: "GET",
+          data: { id : nodeid },
+          dataType: "html",
+          cache: "false",
+          timeout: "10000"
+        });
         
+        requestrecive.done(function( msg ) {
+          var nodes = JSON.parse ( msg );
 
+          var key;
 
+          nodequestion = {};
+          nodeyes = {};
+          nodeno = {};
+          
+
+          for ( key in nodes )
+          {
+            if ( nodes [ key ]._id == nodeid ) {
+              nodequestion = nodes [ key ];
+            }
+            else if ( nodes [ key ].yes == nodeid ) {
+              nodeyes = nodes [ key ];
+            }
+            else if ( nodes [ key ].no == nodeid ) {
+              nodeno = nodes [ key ];
+            }
+          }
+
+          var fullquestion = nodequestion.question;
+
+          if ( nodequestion.isanimal )
+          {
+            fullquestion = 'Is it ' + nodequestion.question;
+          }
+
+          setquestionarea ( fullquestion + "?" );
+
+          $('.answerarea').show();
+          $('.newquestionarea').hide();
+          $("body").css("cursor", "default");
+        });
+        
+        requestrecive.fail ( function ( jqXHR, textStatus ) {
+          setquestionarea ( "Failed connecting to the server<br>Status: "+ jqXHR.status + " " + jqXHR.responseText );
+          $("body").css("cursor", "default");
+        });
       };
 
+      function setquestionarea ( text ) {
+        $('.questionarea').html('<p align="center" style="font-family: \'lucida console\' \'courier new\' monospace; font-size: 20pt">' + text +  '</p>');
+      }
+
       function sayYes() {
-        $('.answerarea').css('font-weight', 'bold');
+        if ( nodequestion.isanimal ) {
+          $('#inlinecountattempts').text(countattempts);
+          $('.answerarea').hide();
+          $('.congratulatearea').show();
+        }
+        else {
+          getNextQuestion ( nodeyes._id );
+        }
       }
 
       function sayNo() {
-        $('.answerarea').css('font-weight', 'normal');
+        if ( nodequestion.isanimal ) {
+          $('.newquestionarea').show();
+          $('#currentanimal').text(nodequestion.question);
+          $('.answerarea').hide();
+        }
+        else {
+          getNextQuestion ( nodeno._id );
+        }
+      }
+
+     function submitNewQuestion() {
+
+        var newQuestion = $('#newquestion').val();
+        var newAnimal = $('#newanimal').val();
+
+        if ( newQuestion.length < 4 || newAnimal.length < 4 )
+        {
+          alert ( 'You can\'t submit empty strings!' );
+          return;
+        }
+
+        var data = 
+          "oldId=" + encodeURIComponent ( nodequestion._id ) + "&" + 
+          "oldQuestion=" + encodeURIComponent ( nodequestion.question ) + "&" + 
+          "oldYes=" + encodeURIComponent ( nodequestion.yes ) + "&" + 
+          "oldNo=" + encodeURIComponent ( nodequestion.no ) + "&" + 
+          "oldIsAnimal=" + encodeURIComponent ( nodequestion.isanimal ) + "&" + 
+
+          "newQuestion=" + encodeURIComponent ( newQuestion ) + "&" + 
+          "newAnimal=" + encodeURIComponent ( newAnimal );
+
+        var requestsend = $.ajax({
+          url: "/api/put",
+          method: "GET",
+          data: data,
+          dataType: "html",
+          cache: "false",
+          timeout: "10000"
+        });
+
+        $("body").css("cursor", "progress");
+
+        requestsend.done(function( msg ) {
+          $("body").css("cursor", "default");
+          alert ( 'New question successfully submitted!' );
+          location.reload(true);
+        });
+
+        requestsend.fail ( function ( jqXHR, textStatus ) {
+          $("body").css("cursor", "default");
+          alert ( 'Failed to submit new question! Please try again.' );
+        });
+      }
+
+      function sayGiveMeANewQuestion() {
+
       }
    </script>
 	</head>
-	<body style="background-color:#a3fdff"">
+  <body style="background-color:#a3fdff">
     <div style="margin-left:10%; margin-right:10%; border:2px solid #4caf50; background-color:#c3ffba; padding: 5px">
       <header>
-        <div class="welcomemessage" align="center">
-          Välkommen till oss och gissa djur!
+        <div class="welcomemessage" style="text-align:center">
+          Welcome to the AI and <i>Twenty Questions</i>!
         </div>
       </header>
 
-      <hr width="50%">
+      <hr style="width:50%">
 
-      <div align="center" style="font-family: 'lucida console' 'courier new' monospace; font-size: 14pt">
-        Tänk på ett djur och låt websidan gissa vilket du tänker på!
+      <div style="text-align:center; font-family: 'lucida console' 'courier new' monospace; font-size: 14pt">
+        Start thinking about an animal and let the AI guess what you are thinking about!
       </div>
 
       <br>
@@ -83,12 +199,26 @@
       <br>
 
       <p class="answerarea">
+        <button onclick="sayYes()">Yes</button><button onclick="sayNo()">No</button>
       </p>
-      </span>
+
+      <p class="congratulatearea">
+          Congratulating the AI within myself. I managed it on <span id="inlinecountattempts"></span> attempt(s). <button onclick="location.reload(true);">Start over</button>
+
+      </p>
+
+      <p class="newquestionarea">
+        The AI has no more questions to ask about the animal you are thinking about. Then it wants to learn something new!
+
+        Complete the question and answers below and submit, to add it to the database.
+
+        <div class="newquestionarea">
+          <div class="newquestionarea" style="margin-left:1%; margin-right:1%; border:1px solid #000000; background-color:#52fa6e; padding: 5px">
+            Add the following to the database:
+            <input type="text" id="newquestion" placeholder="Is it a reptile">? Yes: <input type="text" id="newanimal" placeholder="a crocodile"> No: <span id="currentanimal"></span>
+            <input type="button" id="confirmNewAnimal" value="Submit new question" onclick="submitNewQuestion()">
+          </div>
+        </div>
     </div> 
-  </body>     
-
-
-
-
+  </body>
 </html>
