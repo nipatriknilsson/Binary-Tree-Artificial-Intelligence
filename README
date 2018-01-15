@@ -3,7 +3,7 @@ Artificial Intelligence using a binary tree
 
 This Javascript code demonstrates Artificial Intelligence (AI) using a Node Express server and a client webbrowser. The AI is built with a binary tree.
 
-The AI's goal is to guess what animal you are thinking about. When the database is empty, the question is "Is it a dog?". There is no rebuilding of the binary tree, so thinking of broader questions before specific are a good idea.
+The goal of the AI is to guess what animal you are thinking about. When the database is empty, the question is "Is it a dog?". There is no rebuilding of the binary tree, so thinking of broader questions before specific are a good idea.
 
 Install requirements (Tested on Windows 10)
 ============================================
@@ -22,9 +22,9 @@ Tested with MongoDB v3.6.1. It must be listen on http://localhost:27017
 
 When everything is running connect the browser to http://localhost:5000
 
+Technologies used in this project
 ============================================
 
-Technologies used in this project:
 jQuery
 FlowType
 HTML
