@@ -6,8 +6,7 @@ The goal of the AI is to guess what animal you are thinking about. When the data
 
 ## Install requirements (Tested on Windows 10)
 
-1. Node (https://nodejs.org/)
-Tested with NodeJS v8.9.3.
+1. NodeJS (https://nodejs.org/). Tested with NodeJS v8.9.3.
 
 2. MongoDB (https://www.mongodb.com/download-center?jmp=nav#community)
 Tested with MongoDB v3.6.1. It must be listen on http://localhost:27017. Create folder "C:\data\db\". Start MongoDB with "mongod". It is in folder "C:\Program Files\MongoDB\Server\3.6\bin". 
