@@ -21,11 +21,4 @@ When everything is running connect the browser to http://localhost:5000
 
 ## Technologies used in this project
 
-jQuery
-FlowType
-HTML
-CSS
-NodeJS
-Express
-HTTP GET with parameters
-Javascript
+jQuery, FlowType, HTML, CSS, NodeJS, Express, HTTP GET with parameters, Javascript
