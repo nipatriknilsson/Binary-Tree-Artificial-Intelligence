@@ -3,6 +3,8 @@ var objectId = require('mongodb').ObjectID;
 var uuid = require('uuid');
 var sha256 = require('js-sha256');
 
+//Called when the user want to add data to the database
+
 var putNode = function (req, res, next) {
     var url = 'mongodb://localhost:27017/q20';
 
@@ -12,6 +14,7 @@ var putNode = function (req, res, next) {
             if ( db ) {
                 var collection = db.collection('nodes');
 
+                //Assemble data
                 var parent_id = req.query.oldId;
                 var parent_question = req.query.newQuestion;
                 var parent_yes = req.query.oldYes != "null" ? req.query.oldYes : null;
@@ -30,6 +33,7 @@ var putNode = function (req, res, next) {
                 var child_no_No = parent_id;
                 var child_no_IsAnimal = req.query.oldIsAnimal;
 
+                //Assemle query
                 var queryinsert =
                 [
                     {
@@ -55,6 +59,7 @@ var putNode = function (req, res, next) {
                     }
                 ];
 
+                //Insert or update three rows
                 for ( var item in queryinsert ) {
                     try {
                         collection.updateMany(
@@ -77,7 +82,7 @@ var putNode = function (req, res, next) {
                     }
                     catch ( e ) {
                         print( e );
-                        res.status ( 500 ).send( 'Ett fel inträffade. (1): ' + e );
+                        res.status ( 500 ).send( 'Error updating the database. (1): ' + e );
                     }
                 }
 

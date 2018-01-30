@@ -10,12 +10,15 @@
     <script src="/flowtype.js"></script>
     
     <script>
+      /* Initiate variables */
       var nodequestion = {};
       var nodeyes = {};
       var nodeno = {};
       var countattempts = 0;
 
+      /* Script on startup */
       $(document).ready(function() {
+        /* Set user interface */
         $('.welcomemessage').flowtype({
           minFont   : 12,
           maxFont   : 40,
@@ -36,10 +39,12 @@
 
         $('.welcomemessage').css('font-size', size + 'pt');
 
+        /* Get first question */
         getNextQuestion ('root');
       });
 
       function getNextQuestion(nodeid) {
+        /* Update try count and set UI to reflect getting the new question */
         countattempts ++;
         $('.congratulatearea').hide();
 
@@ -50,6 +55,7 @@
         nodeyes = {};
         nodeno = {};
 
+        /* Initiate GET next question from the database */
         var requestrecive = $.ajax({
           url: "/api/get",
           method: "GET",
@@ -58,7 +64,8 @@
           cache: "false",
           timeout: "10000"
         });
-        
+
+        /* Successful GET: parse data and update the UI */        
         requestrecive.done(function( msg ) {
           var nodes = JSON.parse ( msg );
 
@@ -68,7 +75,6 @@
           nodeyes = {};
           nodeno = {};
           
-
           for ( key in nodes )
           {
             if ( nodes [ key ]._id == nodeid ) {
@@ -95,17 +101,20 @@
           $('.newquestionarea').hide();
           $("body").css("cursor", "default");
         });
-        
+
+        /* GET new question failed */        
         requestrecive.fail ( function ( jqXHR, textStatus ) {
           setquestionarea ( "Failed connecting to the server<br>Status: "+ jqXHR.status + " " + jqXHR.responseText );
           $("body").css("cursor", "default");
         });
       };
 
+      /* Function to update question area */
       function setquestionarea ( text ) {
         $('.questionarea').html('<p align="center" style="font-family: \'lucida console\' \'courier new\' monospace; font-size: 20pt">' + text +  '</p>');
       }
 
+      /* User pressed YES */
       function sayYes() {
         if ( nodequestion.isanimal ) {
           $('#inlinecountattempts').text(countattempts);
@@ -117,6 +126,7 @@
         }
       }
 
+      /* User pressed NO */
       function sayNo() {
         if ( nodequestion.isanimal ) {
           $('.newquestionarea').show();
@@ -128,8 +138,8 @@
         }
       }
 
+      /* User wants to submit a new question */
      function submitNewQuestion() {
-
         var newQuestion = $('#newquestion').val();
         var newAnimal = $('#newanimal').val();
 
@@ -139,6 +149,7 @@
           return;
         }
 
+        /* Prepare data to send */
         var data = 
           "oldId=" + encodeURIComponent ( nodequestion._id ) + "&" + 
           "oldQuestion=" + encodeURIComponent ( nodequestion.question ) + "&" + 
@@ -160,20 +171,18 @@
 
         $("body").css("cursor", "progress");
 
+        /* Successfully added the new question to the database */
         requestsend.done(function( msg ) {
           $("body").css("cursor", "default");
           alert ( 'New question successfully submitted!' );
           location.reload(true);
         });
 
+        /* Failed to submit the new question */
         requestsend.fail ( function ( jqXHR, textStatus ) {
           $("body").css("cursor", "default");
           alert ( 'Failed to submit new question! Please try again.' );
         });
-      }
-
-      function sayGiveMeANewQuestion() {
-
       }
    </script>
 	</head>

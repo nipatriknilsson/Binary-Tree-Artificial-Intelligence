@@ -1,6 +1,8 @@
 var mongodb = require('mongodb').MongoClient;
 var objectId = require('mongodb').ObjectID;
 
+// Called when the user wants a node in the tree
+
 var getNode = function (req, res, next) {
     var url = 'mongodb://localhost:27017/q20';
 
@@ -12,6 +14,7 @@ var getNode = function (req, res, next) {
 
                 var nodeid = req.query.id;
 
+                // select statement
                 var query = 
                     {
                         $or:
@@ -28,6 +31,7 @@ var getNode = function (req, res, next) {
                         ]
                     };
 
+                //What to return on empty database
                 var collectionEmpty = 
                 [
                     {
@@ -45,8 +49,7 @@ var getNode = function (req, res, next) {
                     }
                 ];
 
-//                {$or: [{expires: {$gte: new Date()}}, {expires: null}]}                
-
+                //Call database and return a response to the user
                 collection.find( query ).toArray(
                     function (err, results) {
                         if ( err ) {
@@ -77,6 +80,5 @@ var getNode = function (req, res, next) {
         }
     });
 };
-
 
 module.exports = getNode;
