@@ -1,6 +1,6 @@
-## Artificial Intelligence using a binary tree
+# WARNING: THIS PROJECT DEPENDS ON SOFTWARE WITH SECURITY ISSUES. IT WILL NOT BE UPDATED.
 
-WARNING: THIS PROJECT DEPENDS ON SOFTWARE WITH SECURITY ISSUES. IT WILL NOT BE UPDATED.
+## Artificial Intelligence using a binary tree
 
 This Javascript code demonstrates Artificial Intelligence (AI) using a Node Express server and a client webbrowser. The AI is built with a binary tree.
 
